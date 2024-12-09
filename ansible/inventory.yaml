@@ -1,7 +1,7 @@
 thin_clients:
   vars:
     ansible_user: thin
-  hosts: thin[00:00].home
+  hosts: thin[0:0].home
 
 dns_server:
   hosts:
