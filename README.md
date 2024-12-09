@@ -20,5 +20,7 @@ As any homelab, there's no such thing as a perfect homelab. This part will be ad
 Here's the list of deployed application to the homelab.
 
 - [x] DNS server (with DoT, Ad + Malware blocking, etc)
+- [ ] Observability tooling (Grafana + Prometheus)
+- [ ] CI/CD server for future builds
 - [ ] Home VPN, using tailscale, or something else
 - [ ] ISP monitoring (speed test, ping, etc)
