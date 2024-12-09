@@ -1,0 +1,43 @@
+- name: Install FluxDB
+  hosts: observability_server
+  become: true
+  tasks:
+    - name: Add FluxDB apt repository
+      ansible.builtin.deb822_repository:
+        name: influxdata
+        types: [deb]
+        uris: "https://repos.influxdata.com/debian"
+        signed_by: "https://repos.influxdata.com/influxdata-archive.key"
+        suites: stable
+        components:
+          - main
+        state: present
+        enabled: true
+
+    - name: Install FluxDB
+      ansible.builtin.apt:
+        name: influxdb2
+        update_cache: true
+        state: present
+
+- name: Install Grafana
+  hosts: observability_server
+  become: true
+  tasks:
+    - name: Add Grafana apt repository
+      ansible.builtin.deb822_repository:
+        name: grafana
+        types: [deb]
+        uris: "https://apt.grafana.com"
+        signed_by: "https://apt.grafana.com/gpg.key"
+        suites: stable
+        components:
+          - main
+        state: present
+        enabled: true
+
+    - name: Install Grafana
+      ansible.builtin.apt:
+        name: grafana
+        update_cache: true
+        state: present
