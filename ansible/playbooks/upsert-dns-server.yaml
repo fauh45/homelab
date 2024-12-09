@@ -1,0 +1,80 @@
+---
+- name: Install Technitium DNS Server
+  hosts: dns_server
+  tasks:
+    - name: Download Technitium DNS Installer/Updater
+      ansible.builtin.get_url:
+        url: "https://download.technitium.com/dns/install.sh"
+        dest: "/tmp/dns_install.sh"
+        mode: "u+rwx"
+
+    - name: Execute Tecnitium DNS Installer/Updater
+      become: true
+      ansible.builtin.shell: "/tmp/dns_install.sh"
+
+    - name: Remove Technitium DNS Installer/Updater
+      ansible.builtin.file:
+        path: "/tmp/dns_install.sh"
+        state: absent
+
+- name: Enable port on the firewall
+  hosts: dns_server
+  become: true
+  tasks:
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
+
+    - name: Allow Technitium web console access by local devices
+      community.general.ufw:
+        rule: allow
+        port: 5380
+        proto: tcp
+        src: "{{ item }}"
+      loop:
+        - 192.168.18.0/16
+
+    # Enable if going to be used
+    # - name: Allow Technitium HTTPS console access by local devices
+    #   community.general.ufw:
+    #     rule: allow
+    #     port: 53443
+    #     proto: tcp
+    #     src: "{{ item }}"
+    #   loop:
+    #     - 192.168.18.0/16
+
+    - name: Allow DNS service
+      community.general.ufw:
+        rule: allow
+        port: 53
+        proto: "{{ item }}"
+      loop:
+        - udp
+        - tcp
+
+    # Enable if used
+    # - name: Allow DNS-over-QUIC + DNS-over-TLS service
+    #   community.general.ufw:
+    #     rule: allow
+    #     port: 853
+    #     proto: "{{ item }}"
+    #   loop:
+    #     - udp
+    #     - tcp
+    #
+    # - name: Allow DNS-over-HTTPS service
+    #   community.general.ufw:
+    #     rule: allow
+    #     port: 443
+    #     proto: "{{ item }}"
+    #   loop:
+    #     - udp
+    #     - tcp
+
+    # Enable if going to be used
+    # - name: Allow Technitium DHCP server
+    #   community.general.ufw:
+    #     rule: allow
+    #     port: 67
+    #     proto: udp
