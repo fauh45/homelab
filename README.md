@@ -19,6 +19,6 @@ As any homelab, there's no such thing as a perfect homelab. This part will be ad
 
 Here's the list of deployed application to the homelab.
 
-- [ ] DNS server (with DoT, Ad + Malware blocking, etc)
+- [x] DNS server (with DoT, Ad + Malware blocking, etc)
 - [ ] Home VPN, using tailscale, or something else
 - [ ] ISP monitoring (speed test, ping, etc)
