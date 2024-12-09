@@ -1,0 +1,12 @@
+- name: Allow all remote access system to access the server
+  hosts: all
+  become: true
+  tasks:
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
+
+    - name: Enable SSH
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
