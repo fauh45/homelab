@@ -13,6 +13,13 @@ All the playbook related to the homelab is saved on `./playbooks/`.
 
 Allows all ports for remote access to be used. Currently it's only SSH.
 
+### deploy-home-assistant.yaml
+
+> [!WARNING]
+> Requires root
+
+Deploys Home Assistant Core with HA user `homeassistant`.
+
 ### upsert-dns-server.yaml
 
 > [!WARNING]
