@@ -10,3 +10,9 @@
       community.general.ufw:
         rule: allow
         name: OpenSSH
+
+    - name: Enable mDNS
+      community.general.ufw:
+        rule: allow
+        port: 5353
+        proto: udp
