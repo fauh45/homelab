@@ -1,6 +1,8 @@
 [Unit]
 Description=Home Assistant
 After=network.target
+Wants=dns.service
+After=dns.service
 
 [Service]
 Type=simple
