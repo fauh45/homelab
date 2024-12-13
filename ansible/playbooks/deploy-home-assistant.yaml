@@ -33,8 +33,11 @@
     - name: Ensure Home Assistant User
       ansible.builtin.user:
         name: homeassistant
+        group: homeassistant
         system: true
         create_home: true
+        groups:
+          - dialout
 
     - name: Ensure HA Config Folder
       ansible.builtin.file:
