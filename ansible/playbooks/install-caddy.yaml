@@ -1,0 +1,77 @@
+- name: Installing Caddy API
+  hosts: all
+  become: true
+  vars:
+    - caddy_version: v2.8.4
+    - upgrade_xcaddy: false
+    - caddy_install_dir: /usr/bin
+    - caddy_user: "caddy"
+    - caddy_user_group: "caddy"
+  tasks:
+    - name: Add xcaddy cloudsmith repository
+      ansible.builtin.deb822_repository:
+        name: caddy-xcaddy
+        state: present
+        signed_by: https://dl.cloudsmith.io/public/caddy/xcaddy/gpg.key
+        types:
+          - deb
+          - deb-src
+        uris: https://dl.cloudsmith.io/public/caddy/xcaddy/deb/debian
+        components: main
+        suites: any-version
+
+    - name: Install xcaddy
+      ansible.builtin.apt:
+        name: xcaddy
+        state: present
+        update_cache: true
+        upgrade: "{{ upgrade_xcaddy }}"
+
+    - name: Check if there's previous version of Caddy
+      ansible.builtin.stat:
+        path: "{{ caddy_install_dir }}/caddy"
+      register: caddy_executable_check
+
+    - name: Check Caddy version
+      ansible.builtin.command:
+        argv:
+          - "{{ caddy_install_dir }}/caddy"
+          - --version
+      when: not caddy_executable_check.exists
+      register: caddy_version_output
+
+    - name: Build caddy with xcaddy
+      ansible.builtin.command:
+        argv:
+          - xcaddy
+          - build
+          - "{{ caddy_version }}"
+          - "--output {{ caddy_install_dir }}/caddy"
+          - --with github.com/mholt/caddy-dynamicdns
+          - --with github.com/caddy-dns/cloudflare
+      when: not caddy_executable_check.exists or '{{ caddy_version }} in caddy_executable_check.stdout'
+
+    - name: Add caddy user and user group
+      ansible.builtin.user:
+        name: "{{ caddy_user }}"
+        group: "{{ caddy_user_group }}"
+        system: true
+        create_home: true
+        home: /var/lib/caddy
+        shell: /usr/sbin/nologin
+        state: present
+
+    - name: Set Caddy systemd service file
+      ansible.builtin.template:
+        src: caddy-api.service.j2
+        dest: "/etc/systemd/system/caddy-api.service"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Start and Enable Caddy service
+      ansible.builtin.systemd:
+        name: caddy-api
+        daemon_reload: true
+        enabled: true
+        state: started
