@@ -16,3 +16,17 @@
         rule: allow
         port: 5353
         proto: udp
+
+- name: Install outgoing cloudflare tunnel
+  # TODO: add more hosts here for other app requiring external access
+  hosts:
+    - ha_hosts
+  become: true
+  tasks:
+    - name: Install cloudflared
+      ansible.builtin.apt:
+        state: present
+        deb: https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+
+    - name: Install cloudflared service
+      ansible.builtin.command: cloudflared service install "{{ cf_install_token }}"
