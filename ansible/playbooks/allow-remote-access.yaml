@@ -18,9 +18,8 @@
         proto: udp
 
 - name: Install outgoing cloudflare tunnel
-  # TODO: add more hosts here for other app requiring external access
-  hosts:
-    - ha_hosts
+  # NOTE: this will install cloudflared to all host that have the cf_install_token
+  hosts: all
   become: true
   tasks:
     - name: Install cloudflared

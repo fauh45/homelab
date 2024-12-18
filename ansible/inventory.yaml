@@ -1,17 +1,8 @@
 thin_clients:
   vars:
     ansible_user: thin
-  hosts: thin[0:0].home
-
-dns_server:
   hosts:
     thin0.home:
-      ansible_user: thin
-
-ha_server:
-  hosts:
-    thin0.home:
-      ansible_user: thin
       cf_install_token: !vault |
         $ANSIBLE_VAULT;1.1;AES256
         37393062376237393731653531303366343064306131356134306333316136393838383264333330
@@ -27,3 +18,13 @@ ha_server:
         35306463376561663362633130356437643461376234386262396661326231613466353539383739
         34343533323639333534646333666337656166623332393037643761363465643534326164343231
         61313737303032633230356236326235313561323266333632346564623237633164
+
+dns_server:
+  hosts:
+    thin0.home:
+      ansible_user: thin
+
+ha_server:
+  hosts:
+    thin0.home:
+      ansible_user: thin
